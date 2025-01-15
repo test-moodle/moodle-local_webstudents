@@ -60,7 +60,7 @@ This plugin integrates Moodle with an external microservice to register students
 - `index.php`: Handles user interaction and workflow for registration.
 - `lib.php`: Helper functions for processing and registering users.
 - `lang/en/local_student_enrollment.php`: Language strings.
-- `classes/task/sync_users_task.php`: Cron task responsible for periodic user synchronization.
+- `classes/task/create_student_task.php`: Cron task responsible for periodic user synchronization.
 
 ## License
 This project is licensed under the [GNU General Public License](https://www.gnu.org/licenses/gpl-3.0.html).
