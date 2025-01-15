@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_webstudents';
-$plugin->version = 2025011400;
+$plugin->version = 2025011501;
 $plugin->requires = 2020061500;
 $plugin->maturity = MATURITY_STABLE;
 $plugin->release = '1.0';
