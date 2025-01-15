@@ -24,10 +24,10 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['confirmcreate'] = 'Create New Students';
 $string['endpoint'] = 'Student Data API URL';
 $string['endpoint_desc'] = 'Enter the base URL to fetch student data from an external API.';
 $string['found_students'] = 'New Students Found';
-$string['confirmcreate'] = 'Create New Students';
 $string['newuserpassword'] = 'Your new Moodle account password';
 $string['no_students_found'] = 'No new students available in the API data';
 $string['pluginname'] = 'WEBSERVICE Integration - STUDENT';
