@@ -28,8 +28,6 @@
 
 namespace local_webstudents\task;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Task for creating students.
  *

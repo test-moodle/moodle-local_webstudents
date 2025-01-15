@@ -22,8 +22,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Creates a user based on the provided data and automatically generates a password.
  *
@@ -36,12 +34,8 @@ defined('MOODLE_INTERNAL') || die();
  * @param string $lastname    Last name of the new user.
  * @param string $email       Primary email of the new user. Must be a valid email format.
  * @param string|null $secondemail Optional second email for the new user (stored in a custom profile field).
- *                                  If not provided, the second email field will not be populated.
  *
  * @return void
- *@throws moodle_exception If required data is missing, if the username already exists, or if
- *                          an error occurs during user creation or updating.
- *
  */
 function local_webstudents_create($username, $firstname, $lastname, $email, $secondemail = null) {
     global $DB;
