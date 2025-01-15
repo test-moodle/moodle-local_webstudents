@@ -79,7 +79,7 @@ if (!empty($newstudents)) {
 
     echo $studentshtml;
 
-    $confirmurl = new moodle_url('/local/webstudents/index.php', ['confirm' => 1, 'students' => json_encode($newstudents)]);
+    $confirmurl = new moodle_url('/local/webstudents/index.php', ['confirm' => 1]);
     echo html_writer::tag('p', html_writer::link($confirmurl, get_string('confirmcreate', 'local_webstudents'),
         ['class' => 'btn btn-primary']));
 } else {
