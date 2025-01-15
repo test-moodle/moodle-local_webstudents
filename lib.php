@@ -15,28 +15,35 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Library of functions for creating users.
+ * Library of functions for creating students.
  *
  * @package   local_webstudents
- * @copyright 2024 Maxwell Souza <maxwell.hygor01@gmail.com>
+ * @copyright 2025 Maxwell Souza <maxwell.hygor01@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Creates a user based on the provided data.
+ * Creates a user based on the provided data and automatically generates a password.
  *
  * This function accepts user data and creates a user in Moodle using built-in functions.
- * It generates a username and password automatically.
+ * It generates a random password for the user and can store an optional second email
+ * in a custom profile field.
  *
- * @param string $username    Username for the new user.
+ * @param string $username    Username for the new user. This must be unique.
  * @param string $firstname   First name of the new user.
  * @param string $lastname    Last name of the new user.
- * @param string $email       Email of the new user.
- * @param string $second_email Optional second email for the new user (stored in a custom profile field).
+ * @param string $email       Primary email of the new user. Must be a valid email format.
+ * @param string|null $secondemail Optional second email for the new user (stored in a custom profile field).
+ *                                  If not provided, the second email field will not be populated.
+ *
+ * @return void
+ *@throws moodle_exception If required data is missing, if the username already exists, or if
+ *                          an error occurs during user creation or updating.
+ *
  */
-function local_webstudents_create($username, $firstname, $lastname, $email, $second_email = null) {
+function local_webstudents_create($username, $firstname, $lastname, $email, $secondemail = null) {
     global $DB;
 
     if (empty($username) || empty($firstname) || empty($lastname) || empty($email)) {
@@ -52,7 +59,7 @@ function local_webstudents_create($username, $firstname, $lastname, $email, $sec
     $newuser->firstname = $firstname;
     $newuser->lastname = $lastname;
     $newuser->email = $email;
-    $newuser->second_email = $second_email;
+    $newuser->second_email = $secondemail;
     $newuser->confirmed = 1;
     $newuser->auth = 'manual';
     $newuser->timecreated = time();
@@ -79,13 +86,13 @@ function local_webstudents_create($username, $firstname, $lastname, $email, $sec
                 $field = $DB->get_record('user_info_field', ['shortname' => 'email_2aOpcao']);
 
                 if ($field) {
-                    $profile_data = new stdClass();
-                    $profile_data->userid = $user->id;
-                    $profile_data->fieldid = $field->id;
-                    $profile_data->data = $newuser->second_email;
-                    $profile_data->dataformat = 1; // Text format
+                    $profiledata = new stdClass();
+                    $profiledata->userid = $user->id;
+                    $profiledata->fieldid = $field->id;
+                    $profiledata->data = $newuser->second_email;
+                    $profiledata->dataformat = 1;
 
-                    $DB->insert_record('user_info_data', $profile_data);
+                    $DB->insert_record('user_info_data', $profiledata);
                 } else {
                     throw new moodle_exception('fieldnotfound', 'local_webstudents', '', 'email_2aOpcao');
                 }
@@ -112,21 +119,31 @@ function local_webstudents_create($username, $firstname, $lastname, $email, $sec
 /**
  * Filters out users that already exist based on the username.
  *
- * @param array $studentsdata Array of student data.
- * @return array Array of users that do not exist in the Moodle database.
+ * This function checks an array of student data and filters out those that already exist
+ * in the Moodle user database based on their username. It ensures that only new users
+ * (whose usernames are not already registered) are included in the result.
+ *
+ * @param array $studentsdata Array of student data, each containing at least a 'username' key.
+ *                            Each element in the array is expected to be an associative array.
+ *
+ * @return array Array of students (from the input array) whose usernames do not exist
+ *               in the Moodle user database.
+ *               Each element in the returned array will be a student array.
+ *
+ * @throws moodle_exception If there is a problem with reading or processing the student data.
  */
 function local_webstudents_filter_existing_users($studentsdata) {
     global $DB;
 
-    $new_users = [];
+    $newusers = [];
 
     foreach ($studentsdata as $student) {
         $username = clean_param($student['username'], PARAM_TEXT);
 
         if (!$DB->record_exists('user', ['username' => $username])) {
-            $new_users[] = $student;
+            $newusers[] = $student;
         }
     }
 
-    return $new_users;
+    return $newusers;
 }
